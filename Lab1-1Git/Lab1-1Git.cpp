@@ -54,7 +54,7 @@ int menu(int, char [][LENGTHMENU]);
 void minn(struct Kinoed*, int);
 void text_data(char *,char *);
 void oldest(struct Kinoed*,int);
-void kolvo(struct Kinoed*, int);
+void kolvofilmov(struct Kinoed*, int);
 void vstavka(struct Kinoed*,char *, int);
 void vstavkakino(struct Kinoed*, char *, int);
 void alfalistkino(struct Kinoed*, int);
@@ -123,7 +123,7 @@ Console::CursorTop=22;
 printf("Был выпущен %s ",s);
 getch();
 }
-void kolvoigr(struct Kinoed *kino, int chislostrok)
+void kolvofilmov(struct Kinoed *kino, int chislostrok)
 {
 int i,k=0;
 char vvodstudio[18];
@@ -503,7 +503,7 @@ n = menu(11, dan);
 switch (n) {  
   case 1: minn(kino,chislostrok); break;;  
   case 2: oldest(kino,chislostrok);break;  
-  case 3: kolvoigr(kino,chislostrok);break;  
+  case 3: kolvofilmov(kino,chislostrok);break;  
   case 4: alfalist(kino,chislostrok);break;  
   case 5: alfalistkino(kino,chislostrok);break;  
   case 6: listing(kino,chislostrok);break;
