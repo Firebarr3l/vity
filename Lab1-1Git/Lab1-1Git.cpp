@@ -114,7 +114,7 @@ Console::ForegroundColor=ConsoleColor::Yellow;
 Console::BackgroundColor=ConsoleColor::DarkCyan;
 Console::CursorLeft=10;
 Console::CursorTop=18;
-printf("—ама€ \"стара€\" фильм принадлежит студии %s ",best->studioname);
+printf("—амый \"старый\" фильм принадлежит студии %s ",best->studioname);
 Console::CursorLeft=10;
 Console::CursorTop=20;
 printf("это %s",best->name);
@@ -154,7 +154,7 @@ for(i=0;i<chislostrok;i++){
 Console::ForegroundColor=ConsoleColor::Yellow;
 Console::BackgroundColor=ConsoleColor::DarkCyan;
 Console::CursorLeft=10;
-Console::CursorTop=20;
+Console::CursorTop=22;
 printf("—туди€ %s выпустила всего: %d фильмов",vvodstudio, k);
 getch();
 }
