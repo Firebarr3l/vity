@@ -20,8 +20,6 @@ using namespace System::IO;
 #define LENGTHMENU 84
 
 struct Kinoed  *Kinoed = NULL;
-struct sp *spisok = NULL;
-struct sp2 *spisok2 = NULL;
 
 struct Kinoed {
   char name[31];
@@ -54,14 +52,14 @@ int menu(int, char [][LENGTHMENU]);
 void minn(struct Kinoed*, int);
 void text_data(char *,char *);
 void oldest(struct Kinoed*,int);
-void kolvofilmov(struct Kinoed*, int);
-void vstavka(struct Kinoed*,char *, int);
-void vstavkakino(struct Kinoed*, char *, int);
-void alfalistkino(struct Kinoed*, int);
-void alfalist(struct Kinoed*, int);
-void listing(struct sp2*, int);
-void diagramstudio(struct Kinoed*, int);
-void diagramkino(struct Kinoed*, int);
+void kolvofilmov(struct Kinoed*,struct sp** spisok, int);
+void vstavka(struct Kinoed*,struct sp** spisok,char *, int);
+void vstavkakino(struct Kinoed*,struct sp2** spisok2, char *, int);
+void alfalistkino(struct Kinoed*,struct sp2** spisok2, int);
+void alfalist(struct Kinoed*,struct sp** spisok, int);
+void listing(struct sp2*,struct sp2** spisok2, int);
+void diagramstudio(struct Kinoed*,struct sp** spisok, int);
+void diagramkino(struct Kinoed*,struct sp2** spisok2, int);
 void CompereCostofkino(struct Kinoed*, int);
 
 
@@ -123,19 +121,19 @@ Console::CursorTop=22;
 printf("Был выпущен %s ",s);
 getch();
 }
-void kolvofilmov(struct Kinoed *kino, int chislostrok)
+void kolvofilmov(struct Kinoed *kino,struct sp** spisok, int chislostrok)
 {
 int i,k=0;
 char vvodstudio[18];
 struct sp *nt;
-if(!spisok){
+if(!*spisok){
   for(i=0;i<chislostrok;i++){
-    vstavka(kino,kino[i].studioname, chislostrok);}
+    vstavka(kino,spisok,kino[i].studioname, chislostrok);}
 }
 Console::ForegroundColor=ConsoleColor::Yellow;
 Console::BackgroundColor=ConsoleColor::DarkCyan;
 Console::CursorTop=18;
-for(nt=spisok;nt!=0; nt=nt->sled){
+for(nt=*spisok;nt!=0; nt=nt->sled){
   Console::CursorLeft=80;
   printf("%-20s ",nt->studioname);
   Console::CursorTop+=1;}
@@ -159,11 +157,11 @@ printf("Студия %s выпустила всего: %d фильмов",vvodstudio, k);
 getch();
 }
 
-void vstavka(struct Kinoed* kinostudio, char* studioname, int chislostrok) 
+void vstavka(struct Kinoed* kinostudio,struct sp** spisok, char* studioname, int chislostrok) 
 { 
 int i; 
 struct sp *nov,*nt,*z=0; 
-for(nt=spisok; nt!=0 && strcmp(nt->studioname,studioname)<0; z=nt, nt=nt->sled); 
+for(nt=*spisok; nt!=0 && strcmp(nt->studioname,studioname)<0; z=nt, nt=nt->sled); 
 if(nt && strcmp(nt->studioname,studioname)==0) return; 
 nov=(struct sp *) malloc(sizeof(struct sp)); 
 strcpy(nov->studioname,studioname); 
@@ -176,17 +174,17 @@ for(i=0;i<chislostrok;i++){
     nov->prodtiket+=kinostudio[i].prodtiket;
     nov->rating+=kinostudio[i].rating;}
 }
-if(!z) spisok=nov; 
+if(!z) *spisok=nov; 
 if(z) z->sled=nov; 
 if(nt) nt->pred=nov; 
 return; 
 }
 
-void vstavkakino(struct Kinoed* moovikino,char* name, int chislostrok) 
+void vstavkakino(struct Kinoed* moovikino,struct sp2** spisok2, char* name, int chislostrok) 
 { 
 int i; 
 struct sp2 *nov,*nt,*z=0; 
-for(nt=spisok2; nt!=0 && strcmp(nt->name,name)<0; z=nt, nt=nt->sled); 
+for(nt=*spisok2; nt!=0 && strcmp(nt->name,name)<0; z=nt, nt=nt->sled); 
 if(nt && strcmp(nt->name,name)==0) return; 
 nov=(struct sp2 *) malloc(sizeof(struct sp2)); 
 strcpy(nov->name,name); 
@@ -205,14 +203,14 @@ for(i=0;i<chislostrok;i++){
     strcat(nov->studioname, moovikino[i].studioname);
     strcat(nov->data, moovikino[i].data);}
 }
-if(!z) spisok2=nov; 
+if(!z) *spisok2=nov; 
 if(z) z->sled=nov; 
 if(nt) nt->pred=nov; 
 return; 
 }
 
 
-void alfalistkino(struct Kinoed* kino, int chislostrok)
+void alfalistkino(struct Kinoed* kino,struct sp2** spisok2, int chislostrok)
 {
 int i;
 char s[17];
@@ -220,21 +218,21 @@ struct sp2 *nt;
 Console::ForegroundColor=ConsoleColor::Yellow; 
 Console::BackgroundColor=ConsoleColor::DarkCyan; 
 Console::Clear();
-if(!spisok2){
+if(!*spisok2){
   for(i=0;i<chislostrok;i++){
-    vstavkakino(kino,kino[i].name, chislostrok);}
+    vstavkakino(kino,spisok2,kino[i].name, chislostrok);}
 }
 Console::Clear();
 printf("\n \t\t\t\tАлфавитный список фильмов");
 printf("\n ======================================================================================================================");
-for(nt=spisok2; nt!=0; nt=nt->sled){
+for(nt=*spisok2; nt!=0; nt=nt->sled){
   text_data(s,nt->data);
   printf("\n %-31s %5ld %12ld %15ld    %-18s   %-17s",nt->name,nt->cost,nt->rating, nt->prodtiket, nt->studioname, s);}
 getch();
 }
 
 
-void alfalist(struct Kinoed* kino, int chislostrok)
+void alfalist(struct Kinoed* kino,struct sp** spisok, int chislostrok)
 {
 int i;
 struct sp *nt,*z;
@@ -244,13 +242,13 @@ Console::Clear();
 printf("\n    Алфавитный список студий");
 printf(" \t\t\t\t   Обратный алфавитный список студий");
 printf("\n========================================================================================================================");
-if(!spisok){
+if(!*spisok){
   for(i=0;i<chislostrok;i++){
-    vstavka(kino,kino[i].studioname, chislostrok);}
+    vstavka(kino,spisok, kino[i].studioname, chislostrok);}
 }
-for(nt=spisok; nt!=0; nt=nt->sled){
+for(nt=*spisok; nt!=0; nt=nt->sled){
   printf("\n %-20s %10ld",nt->studioname,nt->prodtiket);}
-for(nt=spisok,z=0; nt!=0; z=nt,nt=nt->sled);{
+for(nt=*spisok,z=0; nt!=0; z=nt,nt=nt->sled);{
   Console::CursorTop=3;
   for(nt=z; nt!=0; nt=nt->pred){
     Console::CursorLeft=60;
@@ -261,14 +259,14 @@ getch();
 }
 
 
-void listing(struct Kinoed* kino, int chislostrok) 
+void listing(struct Kinoed* kino,struct sp2** spisok2, int chislostrok) 
 { 
 int orn, price, i; 
 char vvodstudio[18];
 struct sp2 *net;
-if(!spisok2){
+if(!*spisok2){
   for(i=0;i<chislostrok;i++){
-    vstavkakino(kino,kino[i].name, chislostrok);}
+    vstavkakino(kino,spisok2,kino[i].name, chislostrok);}
 }
 Console::Clear();
 Console::ForegroundColor=ConsoleColor::Yellow; 
@@ -303,7 +301,7 @@ printf("\n                        Фильмы удовлетворяющие запросам  ");
 printf("\n                                                                                                ");
 printf("\nФильм                             Студия                       Цена/Рейтинг"); 
 printf("\n======================================================================================================================="); 
-for (net = spisok2; net != 0; net = net->sled){
+for (net = *spisok2; net != 0; net = net->sled){
   if (strcmp(net->studioname,vvodstudio)==0){
     if ((((net->rating)>=orn) && ((net->cost)>=price))){
       printf("\n%-31s   %-18s          %4ld/%-7ld",net->name, net->studioname, net->cost, net->rating);}
@@ -314,7 +312,7 @@ getch();
 } 
 
 
-void diagramstudio(struct Kinoed *kino, int chislostrok)
+void diagramstudio(struct Kinoed *kino,struct sp** spisok, int chislostrok)
 {
 struct sp *nt;
 int len,i,NColor;
@@ -328,14 +326,14 @@ Console::ForegroundColor=ConsoleColor::Yellow;
 Console::BackgroundColor=ConsoleColor::DarkCyan; 
 Console::Clear();
 for(i=0;i<chislostrok;i++)copy = copy+kino[i].prodtiket;
-if(!spisok){
+if(!*spisok){
   for(i=0;i<chislostrok;i++){
-    vstavka(kino,kino[i].studioname,chislostrok);}
+    vstavka(kino,spisok,kino[i].studioname,chislostrok);}
 }
 printf("          Диаграмма проданных билетов фильмов определенной студии");
 printf("\n============================================================================");
 Color=ConsoleColor::DarkYellow; NColor=7;
-for(nt=spisok,i=1; nt!=0; nt=nt->sled,i++){
+for(nt=*spisok,i=1; nt!=0; nt=nt->sled,i++){
 sprintf(str1,"%s",nt->studioname);
 sprintf(str2,"%3.1f%%",(nt->prodtiket*100./copy));
 Console::ForegroundColor=ConsoleColor::Yellow; 
@@ -357,7 +355,7 @@ return ;
 }
 
 
-void diagramkino(struct Kinoed *kino, int chislostrok) 
+void diagramkino(struct Kinoed *kino,struct sp2** spisok2,int chislostrok) 
 { 
 struct sp2 *nt; 
 int len,i,NColor; 
@@ -371,9 +369,9 @@ Console::BackgroundColor=ConsoleColor::DarkCyan;
 Console::Clear(); 
 for(i=0;i<chislostrok;i++) sum1 = sum1+kino[i].rating; 
 sum=sum1/chislostrok; 
-if(!spisok2){ 
+if(!*spisok2){ 
   for(i=0;i<chislostrok;i++){ 
-    vstavkakino(kino,kino[i].name,chislostrok);}
+    vstavkakino(kino,spisok2,kino[i].name,chislostrok);}
 }
 Color=ConsoleColor::DarkYellow; NColor=7; 
 Console::ForegroundColor=ConsoleColor::Yellow; 
@@ -385,7 +383,7 @@ for(len=0; len<25; len++)printf(" ");
 Console::ForegroundColor=ConsoleColor::Yellow; 
 Console::BackgroundColor=ConsoleColor::DarkCyan; 
 printf("\n========================================================================================================================================================================="); 
-for(nt=spisok2,i=1; nt!=0; nt=nt->sled,i++) { 
+for(nt=*spisok2,i=1; nt!=0; nt=nt->sled,i++) { 
 sprintf(str1,"%s",nt->name); 
 sprintf(str2,"%3.1f%%",(nt->rating*100./sum)); 
 Console::ForegroundColor=ConsoleColor::Yellow; 
@@ -483,6 +481,8 @@ printf("\n");
 printf("\n");
 printf("\nДля перехода на следующую страницу нажмите ENTER                                                                    "); 
 getch();
+struct sp *spisok = nullptr;
+struct sp2 *spisok2 = nullptr;
 while (1)  {  
   Console::ForegroundColor = ConsoleColor::Magenta;  
   Console::BackgroundColor = ConsoleColor::DarkCyan;  
@@ -503,12 +503,12 @@ n = menu(11, dan);
 switch (n) {  
   case 1: minn(kino,chislostrok); break;;  
   case 2: oldest(kino,chislostrok);break;  
-  case 3: kolvofilmov(kino,chislostrok);break;  
-  case 4: alfalist(kino,chislostrok);break;  
-  case 5: alfalistkino(kino,chislostrok);break;  
-  case 6: listing(kino,chislostrok);break;
-  case 7: diagramkino(kino,chislostrok);break;
-  case 8: diagramstudio(kino,chislostrok);break;
+  case 3: kolvofilmov(kino,&spisok,chislostrok);break;  
+  case 4: alfalist(kino,&spisok,chislostrok);break;  
+  case 5: alfalistkino(kino,&spisok2,chislostrok);break;  
+  case 6: listing(kino,&spisok2,chislostrok);break;
+  case 7: diagramkino(kino,&spisok2,chislostrok);break;
+  case 8: diagramstudio(kino,&spisok,chislostrok);break;
   case 9: CompereCostofkino(kino,chislostrok); break;
   case 10:{Console::CursorLeft=0; 
 Console::BackgroundColor=ConsoleColor::Black; 
